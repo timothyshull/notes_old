@@ -1,0 +1,57 @@
+class WeaponsController < ApplicationController
+  def reload
+    @weapon = Weapon.find(params[:id])
+    respond_to do |format|
+    format.json do
+    format.json { render json: @weapon.ammo }
+    if @weapon.ammo < 30
+      render status: :ok
+      @weapon.reload(params[:ammo_to_reload])
+    else
+      render status: :unprocessable_entity  
+    end
+   end
+  end
+ end   
+end
+
+
+
+respond to both html and json
+
+respond_to do |format|
+	format.html 
+	format.json { render json: @zombie }
+
+only need json
+
+render json: @zombie
+
+
+
+custom route
+locahost:3000/zombies/4/decomp
+
+resources :zombies do
+	resources :tweets
+	get :decomp, on: :member
+end
+
+
+:member - on single resource
+:collection - on collection of resources
+
+@zombie.to_json(only: :name)
+(except [:created_at, :update_at, ;id, ;email, :bio
+
+
+set default JSON responses 
+
+def as_json(options = nil)
+	super(options || {inlcude: :brain, except: [:created_at, ...
+
+
+def decomp
+
+
+render json: @weapon.to_json(only: :ammo), status: :ok

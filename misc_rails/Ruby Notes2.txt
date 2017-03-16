@@ -1,0 +1,129 @@
+rails new ""
+
+bundle install - downloads external dependencies for your rails application
+
+cd into driectory
+
+run rails inside directory will give you a list of commands
+
+-h gives more info on each
+
+generate - new code (g)
+console - for debuggin (c)
+server - to run on local server (s)
+dbconsole - database console (db)
+
+locahost:3000
+
+rails generator no options gives list
+
+rails g scaffold - basic building block for most rails app
+
+rails g scaffold "name" name:string bio:text age:integer
+
+types - string, text, integer, boolean, decimal, float, binary, date, time, datetime
+
+creates files, migration, model, resources zombies to routes.rb, controllers, views
+
+Migration - this is how we make changes to the databases from within rails
+
+class CreateZombies
+	def change
+	create_table :zombies do |t|
+		t.string :name
+		t.text :bio
+		t.integer :age
+		ttimesamps :created_at, updated_at
+
+
+PHP has problems getting overwritten by sql, migrations use Ruby so it is database independent, it is how the database is versioned to keep track of the changes
+
+you have to run the migration file to reflect updates
+
+rake db: migrate
+
+now can run rails server
+
+rails console for debugging
+
+Zombie.create(name: "Eric Allam", age: 27)
+
+z = Zombie.first
+
+z.name
+
+hash is collection of key value pairs
+
+can be :
+
+zombie.create(name: "Eric Allam", age: 27)
+{ "first_name" => Gregg }
+{ 2 => "Pollack" }
+{ :name => "Eric Allam" }
+{ name: "Eric Allam" }
+
+rails g migration AddEmailAndRottingToZombies email:string rotting:boolean
+
+class AddEmailAndRottingToZombies < ActiveRecord::Migration
+def change
+add_column :zombies, :email, :string
+add_column :zombies, :rotting, :boolean, default: false
+
+migration options - default: <value>, limit: 30, null: flase, first: true, after::email, unique and position
+
+rake db:migrate - runs all migrations
+rake db:rollback - undoes migrations
+rake db:schema:dump - use to clear migrations to reduce brittleness
+rake db:setup
+
+rails g migration RemoveAgeFromZombies age:integer
+
+the Remove in name is strategic
+
+generates a migration
+
+RemoveAgeFromZombies
+def up
+	remove_column :zombies, :age
+	end
+
+def down
+	add_column :zombies, :age, :integer
+	end
+
+migration commands
+rename_column
+rename_table
+drop_table
+change_column
+change_column_default
+
+
+
+Gemfile contains all app dependencies
+
+bundle install will install all external dependencies gembundler.com
+
+database is configured in config/database.yml
+
+sqlite
+vs gem 'mysql'
+
+
+
+
+
+Named Scope
+
+Can set attributes in model, can set parameters for age in controller,
+better to wrap a method in model
+
+def make_rotting
+	if age > 20
+		self.rotting = true
+	end
+end
+
+in ruby do not need return, false simply returns
+
+

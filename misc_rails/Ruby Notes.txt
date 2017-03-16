@@ -1,0 +1,508 @@
+
+sudo gem update `gem list | cut -d ' ' -f 1`
+
+ssh - r0g3rth4t
+
+$ cd ~/workspace
+$ rails _4.2.0.beta2_ new hello_app
+
+Bundler
+rails runs bundle install
+
+Git 
+git init - in project directory
+git add -A - adds all files with exception of git ignore
+git status - shows files
+git commit -m "Initialize repository" - commit changes with -m for add message
+
+heroku commands
+
+bundle install --without production
+
+rails server - to run
+
+config for routes.rb
+
+cat ~/.ssh/id_rsa.pub
+
+Users
+
+rails generate scaffold User name:string email:string
+
+bundle exec rake db:migrate
+
+Microposts
+
+rails generate scaffold Micropost content:text user_id:integer
+
+bundle exec rake db:migrate
+
+Validations
+
+class Micropost < ActiveRecord::Base
+  validates :content, length: { maximum: 140 }
+end
+
+rails console
+
+Static Page controller
+
+rails generate controller StaticPages home help
+
+hash - {} pairs keys with values, all :____ are symbols (not strings)
+
+
+
+
+block - chunk of ruby code surrounded by curly braces, can create tallies easily with this
+
+Hashes. The little 'dictionary' with the curly braces: {}.
+Symbols. Tiny, efficiently reusable code words with a colon: :splendid.
+Blocks. Chunks of code which can be tacked on to many of Ruby's methods. Here's the code you used to build a scorecard: books.values.each { |rate| ratings[rate] += 1 }
+
+Method arguments
+
+Dir.entries "/" -- Anything listed after a method is considered an 'attachment'.
+print poem -- See, print is just an ordinary method, while the poem is what got attached for printing.
+print "pre", "event", "ual", "ism" -- This bit has several arguments! Ruby makes us use commas to distinguish between them.
+
+Files. -- Lots of methods exist for editing files and looking around in directories.
+Arguments. -- Arguments are a list of things sent into a method, separated by commas.
+Block Changes. -- You can use do and end as another way to make a code block.
+
+irb to run Ruby console in terminal
+
+
+
+hash - has keys and values, called ruby symbols because they have colon in front
+can concatenate keys - recipe is hashname[:key] =
+
+t = Tweet.find(3) - this is method
+puts t[:id]
+
+tweets - singular uppercase allows use to access lowercase plural tablemate (ie Tweet accesses tweets)
+
+puts t.id - is alternate syntax for puts t[:id}
+
+CRUD - create read update delete for databases
+
+Create
+
+t = Tweet.new 
+t.status = ""
+t.save
+
+Create recipes =
+t = TableName.new
+t.key = value
+t.save
+
+t = TableName.new(hash)
+t.save
+
+TableName.create(hash)
+
+Update
+t = Tweet.find(3)
+t.zombie = ""
+t.save
+
+Update recipes = 
+t = TableName.find(id)
+t.key = value
+t.save
+
+t = TableName.find(id)
+t.attributes = hash
+t.save
+
+t = TableName.update(hash)
+
+Read 
+Tweet.find(3)
+(3,4.5)
+first, last, all
+count
+order
+limit
+method chaining Tweet.where(zombie: "ash").order(:status).limit(10)
+
+Delete
+t = Tweet.find(3)
+t.destroy
+destroy_all
+
+Delete recipes = 
+t = Table.find(id)
+t.destroy
+
+TableName.find(id).destroy
+
+
+Models
+
+Part of application stack
+
+app/models/tweet.rb
+
+classs Tweet < ActiveRecord::Base
+
+end
+
+Tweet.find(3) looks in table and returns instance #3
+
+to make sure status is never blank use
+validates_presence_of :status
+
+validates_numericality_of
+validates_uniqueness_of
+validates_confirmation_of
+validates_acceptance_of
+validates_length_of
+validates_format_of
+validates_inclusion_of
+validates_exclusion_of
+
+validates :status, presence: true, length: { minimum: 3}
+
+validations - presence: true, uniqueness, numericality, length: { minimum: 0, maximum: 2000 }, format: { with: /.*/ }, acceptance: true, confirmation: true
+
+rails apps mean multiple relational databases
+
+mapping relationships between models
+
+app/models/zombie.rb
+class Zombie <
+ActiveRecord::Base
+has_many: tweets
+
+class Tweet < ActiveRecord::Base
+belongs_to: zombie
+end
+
+
+ash = Zombie.find(1)
+t = Tweet.create(status: "", zombie: ash)
+ash.tweets.count
+ash.tweets
+
+
+
+Views 
+
+UI for rails application
+
+views - zombies, tweets - index.html.erb & show.html.erb  (erb = embedded ruby)
+
+app/views/tweets/show.html.erb
+
+<!DOCTYPE html>
+<html>
+	<head><title>RailsForZombies</title></head>
+	<body>
+		<header>...</header>
+		<% tweet = Tweet.find(1) %>
+		<h1><%= tweet.status %></h1>
+		<p>Posted by <%= tweet.zombie.name (link)%></p>
+	</body>
+</html>
+
+%...% means evaluate ruby code
+
+app/view/layouts/application.html.erb
+
+holds headers and footers templates
+<%= yield %> - says this is where contents of .erb goes
+
+Creating a link inside an erb file
+<%= link_to tweet.zombie.name, zombie_path(tweet.zombie) %>
+
+Should never have to hard code URLs in rails
+
+alt
+<%= link_to tweet.sombie.name, tweet.zombie %>
+
+recipe - <%= link_to text_to_show, model_instance %>
+
+<%= link_to tweet.zombie.name, tweet.zombie, confirm: "Are you sure?" %>
+
+
+Looking up documentation
+1 - source git clone http://github.com
+grep
+
+2. api.rubyonrails.org
+
+
+index.html.erb
+
+<h1>Listing tweets</h1>
+<table>
+	<tr>
+		<th>Status</th>
+		<th>Zombie</th>
+	</tr>
+<% tweets = Tweet.all %>
+<% tweets.each do |tweet| %>  -this is the loop to put all tweets in
+	<tr>
+		<td><%= link_to tweet.status, tweet %></td>
+		<td><%= Link_to tweet.zombie.name, tweet.zombie %></td>
+		<td><%= link_to "Edit", edit_tweet_path(tweet) %></td>
+		<td><%= link_to "Destroy", tweet, method: :delete %>
+	</tr>
+<% end %>
+<% if tweets.size == 0 %>
+	<em> No Tweets Found</em>
+<% end %>
+
+
+URL Generators
+list all tweets tweets_path
+New tweet form new_tweet_path
+
+tweet = Tweet.find(1)
+show a tweet tweet
+edit a tweet edit_tweet_path(tweet)
+delete a tweet tweet, method: :delete 
+
+
+
+Controller 
+
+Brains of the application - control models and views
+
+request - controller to a model to a view to user
+
+models get data from database and views display that data 
+
+application stack - request to controller to model to view
+
+app/controllers/tweets_controller.rb
+
+using conventions for naming, convention over configuration, use names to link MVC
+
+class TweetsController < ApplicationController
+	def show   # method or action (interchangeable)
+		@tweet = Tweet.find(1)   # model
+	end   # at the end it goes to the tweets/show.html.erb
+end
+
+and show.html.erb
+<h1><%= @tweet.status %></h1>
+<p>Posted by <%= @tweeet.zombie.name %></p>
+
+@ symbol creates an instance variable
+
+if we want to render to status we can add 
+
+render action: 'status' in TweetsController
+
+
+accepting parameters
+
+rails creates a params automatically
+
+@tweet = Tweet.find(params[:id])  - this looks up proper tweet and render sit to the page
+
+/tweets?staus=I'm dead
+params = { status: "I'm dead" }
+
+often have hash within a hash
+ie @tweet = Tweet.create(status: params[:status])
+
+proper
+@tweet = Tweet.create(status: params[:tweet][:status])
+ie params = { tweet: {status: "I'm dead" }}
+
+alt syntax
+@tweet = Tweet.create(params[:tweet])
+
+This allows users to change other parameters, rails 4 require strong parameters
+@tweet = Tweet.create(params.require(:tweet).permit(:status))
+
+to secure
+
+can also use array ie
+params.required(:tweet).permit([:status, :location])
+
+
+Rails can create backend APIs for apps or webserver, can supply XML and JSON with rails
+
+JSON
+
+/tweets/1.json
+
+/app/controllers/tweets_controller.rb
+
+class TweetsController < ApplicationController
+	def show
+		@tweet = Tweet.find(params[:id])
+		respond_to do |format|
+			format.html # show.html.erb
+			format.json { render json: @ tweet }
+			format.xml { render xml: @tweet }
+		end
+	end
+end
+
+def index list all tweets
+def show show a single tweet
+def new show a new tweet form
+def edit show an edit tweet form
+def create create a new tweet
+def update update a tweet
+def destroy delete a tweet
+end
+
+def edit 
+	@tweet = Tweet.find(params[:id])
+end
+
+edit.html.erb in app/views/tweets
+
+
+localhost:3000/tweets
+
+shows edit and destroy for all users...need to include some sort of authentication 
+
+session creates a per user hash to check for name id
+
+class TweetsController < ApplicationController
+	def edit
+		@tweet = Tweet.find(params[:id])
+		if session[:zombie_id] != @tweet.zombie_id
+			flash[:notice] = "Sorry, you can't edit this tweet"
+			redirect_to(tweets_path)
+		end
+	end
+end
+
+redirect_to(tweets_path, "Notice")
+
+app/views/layouts/application.html.erb
+
+in body
+
+<% if flash[:notice] %>
+	<div id="notice"><%= flash[:notice] %></div>
+<% end %>
+<%= yield %>
+
+
+edit update destroy can all use same code
+
+use methods to outline actions before other methods or actions
+
+before_action :get_tweet, only: [:edit, :update, :destroy]
+before_action :check_auth, :only => [:edit, :update, :destroy]Zombie
+
+def get_tweet
+	@tweet = Tweet.find(params[:id])
+end
+
+def check_auth
+	if session[:zombie_id] != @tweet.zombie_id
+		flash[:notice] = "Notice"
+		redirect_to tweets_path
+	end
+end
+
+
+
+Routing through rails
+
+request to contorller to models to views
+
+fourth component is routes
+
+config/routes.rb
+
+ZombieTwitter::Application.routes.draw do
+	resources :tweets  # this is a restful route
+end
+
+provides URLs for     Tweets Controller
+tweets_path  /tweets  def index
+tweet        /tweet/<id>  def show
+new_tweet_path /tweets/new def new
+edit_tweet_path(tweet) /tweets/<id>/edit def edit
+
+
+Custom routes
+
+resources :tweets
+get '/new_tweet' => 'tweets#new'
+path controller name and action name
+
+
+get '/all' => 'tweets#index'
+
+to link to a named route or static path
+
+get '/all' => 'tweets#index', as: 'all_tweets'
+
+<%= link_to "All Tweets", all_tweets_path %>
+
+redirect localhost/all to/tweets
+
+get '/all' => redirect('/tweets')
+
+
+
+Root Route
+root to: "tweets#index"
+<%= link_to "All Tweets", root_path %>
+
+
+Sorting by URL parameters 
+local_tweets/<zip code>
+
+tweets_controller.rb
+
+def index
+	if params[:zipcode]
+		@tweets = Tweet.where(zipcode: params[:zipcode])
+	else
+		@tweets = Tweet.all
+	end
+	respond_to do |format|
+		format.html
+		format.xml { render xml: @tweets }
+end
+
+
+get '/local_tweets/:zipcode' => 'tweets#index'
+
+zipcode is referenced by params[:zipcode] in controller
+
+
+can also name the route
+
+get '/local_tweets/:zipcode' => 'tweets#index, as: 'local_tweets'
+
+<%= link_to "Tweets in 32828", local_tweets_path(32828) %>
+
+
+Implementing User Names in routing file
+
+add route at bottom of file
+
+get ':name' => 'tweets#index', as: 'zombie_tweets'
+
+<%= link_to "Gregg", zombie_tweets_path('greggpollack') %>
+
+app/controllers/tweets_controller.rb
+
+def index
+	if params[:name]
+		@zombie = Zombie.where(name: params[:name]).first
+		@tweets = @zombie.tweets
+	else
+		@tweets = Tweet.all
+	end
+end
+
+
+
+
+Apache with Passenger
